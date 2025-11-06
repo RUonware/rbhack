@@ -1,4 +1,4 @@
--- Ruon Hack GUI (Final Version)
+-- 🧠 Ruon Hack GUI - Tam Sürüm
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -6,15 +6,15 @@ local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Camera = workspace.CurrentCamera
 
--- GUI Oluşturma
+-- GUI
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "RuonHackGui"
 screenGui.Parent = PlayerGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 220)
-frame.Position = UDim2.new(0.5, -150, 0.5, -110)
+frame.Size = UDim2.new(0, 300, 0, 260)
+frame.Position = UDim2.new(0.5, -150, 0.5, -130)
 frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 frame.BorderSizePixel = 0
 frame.Active = true
@@ -22,7 +22,7 @@ frame.Draggable = true
 frame.Parent = screenGui
 
 local title = Instance.new("TextLabel")
-title.Text = "🧠 Ruon Hack Panel"
+title.Text = " Ruon hile"
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 title.TextColor3 = Color3.fromRGB(0, 255, 0)
@@ -30,7 +30,7 @@ title.BackgroundTransparency = 1
 title.Size = UDim2.new(1, 0, 0, 30)
 title.Parent = frame
 
--- Reklam
+-- Reklam Butonu
 local siteAd = Instance.new("TextButton")
 siteAd.Text = "Ziyaret Et: https://ruonpanel.great-site.net"
 siteAd.Font = Enum.Font.Gotham
@@ -49,7 +49,7 @@ siteAd.MouseButton1Click:Connect(function()
 	})
 end)
 
--- Noclip Toggle
+-- Noclip
 local noclipEnabled = false
 local noclipButton = Instance.new("TextButton")
 noclipButton.Text = "Noclip: Kapalı"
@@ -82,7 +82,58 @@ noclipButton.MouseButton1Click:Connect(function()
 	end
 end)
 
--- GUI Aç/Kapa Tuşu
+-- 🛸 Fly (uçuş)
+local flyEnabled = false
+local flySpeed = 50
+local flyButton = Instance.new("TextButton")
+flyButton.Text = "Fly: Kapalı (H)"
+flyButton.Font = Enum.Font.Gotham
+flyButton.TextSize = 14
+flyButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+flyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+flyButton.Size = UDim2.new(1, -10, 0, 30)
+flyButton.Position = UDim2.new(0, 5, 0, 115)
+flyButton.Parent = frame
+
+local bodyVel, bodyGyro
+
+local function setFly(state)
+	flyEnabled = state
+	if flyEnabled then
+		Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+		local root = Character:WaitForChild("HumanoidRootPart")
+		bodyVel = Instance.new("BodyVelocity")
+		bodyGyro = Instance.new("BodyGyro")
+		bodyVel.MaxForce = Vector3.new(400000, 400000, 400000)
+		bodyGyro.MaxTorque = Vector3.new(400000, 400000, 400000)
+		bodyVel.Velocity = Vector3.zero
+		bodyVel.Parent = root
+		bodyGyro.Parent = root
+		RunService.RenderStepped:Connect(function()
+			if flyEnabled and root then
+				bodyGyro.CFrame = Camera.CFrame
+				local moveDir = Vector3.zero
+				if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + Camera.CFrame.LookVector end
+				if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - Camera.CFrame.LookVector end
+				if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - Camera.CFrame.RightVector end
+				if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + Camera.CFrame.RightVector end
+				bodyVel.Velocity = moveDir * flySpeed
+			end
+		end)
+	else
+		if bodyVel then bodyVel:Destroy() end
+		if bodyGyro then bodyGyro:Destroy() end
+	end
+	flyButton.Text = flyEnabled and "Fly: Açık (H)" or "Fly: Kapalı (H)"
+end
+
+UserInputService.InputBegan:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.H then
+		setFly(not flyEnabled)
+	end
+end)
+
+-- GUI Aç/Kapa (O tuşu)
 local guiVisible = true
 UserInputService.InputBegan:Connect(function(input)
 	if input.KeyCode == Enum.KeyCode.O then
