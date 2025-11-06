@@ -34,7 +34,9 @@ Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 25)
 title.Text = "🚀 RUON FLY SYSTEM"
+title.Text9 = "başka hileler için -- https://ruonpanel.great-site.net --"
 title.TextColor3 = Color3.new(1,1,1)
+title.TextColor9 = Color3.new(200,1,1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 16
 title.BackgroundTransparency = 1
@@ -128,5 +130,6 @@ RunService.RenderStepped:Connect(function()
 end)
 
 print("✅ RUON Fly GUI aktif (Mobil + PC uyumlu)")
+
 
 
