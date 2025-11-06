@@ -1,157 +1,171 @@
--- 🧠 Ruon Hack GUI - Tam Sürüm
+-- 🧠 Ruon Fly + Noclip GUI (Tam Sürüm)
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Camera = workspace.CurrentCamera
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 
--- GUI
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "RuonHackGui"
-screenGui.Parent = PlayerGui
+-- GUI oluştur
+local gui = Instance.new("ScreenGui")
+gui.Name = "RuonGUI"
+gui.ResetOnSpawn = false
+gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 260)
-frame.Position = UDim2.new(0.5, -150, 0.5, -130)
-frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-frame.BorderSizePixel = 0
+frame.Size = UDim2.new(0, 300, 0, 280)
+frame.Position = UDim2.new(0.5, -150, 0.5, -140)
+frame.BackgroundColor3 = Color3.fromRGB(25,25,25)
 frame.Active = true
 frame.Draggable = true
-frame.Parent = screenGui
+frame.Parent = gui
 
 local title = Instance.new("TextLabel")
-title.Text = " Ruon hile"
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "🧠 RUON PANEL"
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
-title.TextColor3 = Color3.fromRGB(0, 255, 0)
+title.TextColor3 = Color3.fromRGB(0,255,0)
 title.BackgroundTransparency = 1
-title.Size = UDim2.new(1, 0, 0, 30)
 title.Parent = frame
 
--- Reklam Butonu
-local siteAd = Instance.new("TextButton")
-siteAd.Text = "Ziyaret Et: https://ruonpanel.great-site.net"
-siteAd.Font = Enum.Font.Gotham
-siteAd.TextSize = 14
-siteAd.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-siteAd.TextColor3 = Color3.fromRGB(0, 200, 255)
-siteAd.Size = UDim2.new(1, -10, 0, 30)
-siteAd.Position = UDim2.new(0, 5, 0, 35)
-siteAd.Parent = frame
-siteAd.MouseButton1Click:Connect(function()
+-- site tanıtımı
+local siteBtn = Instance.new("TextButton")
+siteBtn.Size = UDim2.new(1, -10, 0, 30)
+siteBtn.Position = UDim2.new(0, 5, 0, 40)
+siteBtn.Text = "🔗 https://ruonpanel.great-site.net"
+siteBtn.Font = Enum.Font.Gotham
+siteBtn.TextSize = 14
+siteBtn.TextColor3 = Color3.fromRGB(0,200,255)
+siteBtn.BackgroundColor3 = Color3.fromRGB(35,35,35)
+siteBtn.Parent = frame
+siteBtn.MouseButton1Click:Connect(function()
 	setclipboard("https://ruonpanel.great-site.net")
 	game.StarterGui:SetCore("SendNotification", {
 		Title = "Ruon Panel",
-		Text = "Site linki panoya kopyalandı!",
+		Text = "Site linki kopyalandı!",
 		Duration = 3
 	})
 end)
 
--- Noclip
+-- noclip
 local noclipEnabled = false
-local noclipButton = Instance.new("TextButton")
-noclipButton.Text = "Noclip: Kapalı"
-noclipButton.Font = Enum.Font.Gotham
-noclipButton.TextSize = 14
-noclipButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-noclipButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-noclipButton.Size = UDim2.new(1, -10, 0, 30)
-noclipButton.Position = UDim2.new(0, 5, 0, 75)
-noclipButton.Parent = frame
+local noclipConn
+local noclipBtn = Instance.new("TextButton")
+noclipBtn.Size = UDim2.new(1, -10, 0, 30)
+noclipBtn.Position = UDim2.new(0, 5, 0, 80)
+noclipBtn.Text = "Noclip: Kapalı"
+noclipBtn.Font = Enum.Font.Gotham
+noclipBtn.TextSize = 14
+noclipBtn.TextColor3 = Color3.new(1,1,1)
+noclipBtn.BackgroundColor3 = Color3.fromRGB(50,50,50)
+noclipBtn.Parent = frame
 
-local noclipConnection
-noclipButton.MouseButton1Click:Connect(function()
+noclipBtn.MouseButton1Click:Connect(function()
 	noclipEnabled = not noclipEnabled
-	noclipButton.Text = noclipEnabled and "Noclip: Açık" or "Noclip: Kapalı"
+	noclipBtn.Text = noclipEnabled and "Noclip: Açık" or "Noclip: Kapalı"
 	if noclipEnabled then
-		noclipConnection = RunService.Stepped:Connect(function()
-			if Character and Character:FindFirstChild("HumanoidRootPart") then
-				for _, part in pairs(Character:GetChildren()) do
-					if part:IsA("BasePart") then
-						part.CanCollide = false
+		noclipConn = RunService.Stepped:Connect(function()
+			if Character then
+				for _, v in pairs(Character:GetChildren()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false
 					end
 				end
 			end
 		end)
 	else
-		if noclipConnection then
-			noclipConnection:Disconnect()
+		if noclipConn then
+			noclipConn:Disconnect()
 		end
 	end
 end)
 
--- 🛸 Fly (uçuş)
+-- fly sistemi
 local flyEnabled = false
 local flySpeed = 50
-local flyButton = Instance.new("TextButton")
-flyButton.Text = "Fly: Kapalı (H)"
-flyButton.Font = Enum.Font.Gotham
-flyButton.TextSize = 14
-flyButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-flyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-flyButton.Size = UDim2.new(1, -10, 0, 30)
-flyButton.Position = UDim2.new(0, 5, 0, 115)
-flyButton.Parent = frame
+local BV, BG
 
-local bodyVel, bodyGyro
+local flyBtn = Instance.new("TextButton")
+flyBtn.Size = UDim2.new(1, -10, 0, 30)
+flyBtn.Position = UDim2.new(0, 5, 0, 120)
+flyBtn.Text = "Fly: Kapalı"
+flyBtn.Font = Enum.Font.Gotham
+flyBtn.TextSize = 14
+flyBtn.TextColor3 = Color3.new(1,1,1)
+flyBtn.BackgroundColor3 = Color3.fromRGB(50,50,50)
+flyBtn.Parent = frame
 
-local function setFly(state)
-	flyEnabled = state
-	if flyEnabled then
-		Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-		local root = Character:WaitForChild("HumanoidRootPart")
-		bodyVel = Instance.new("BodyVelocity")
-		bodyGyro = Instance.new("BodyGyro")
-		bodyVel.MaxForce = Vector3.new(400000, 400000, 400000)
-		bodyGyro.MaxTorque = Vector3.new(400000, 400000, 400000)
-		bodyVel.Velocity = Vector3.zero
-		bodyVel.Parent = root
-		bodyGyro.Parent = root
-		RunService.RenderStepped:Connect(function()
-			if flyEnabled and root then
-				bodyGyro.CFrame = Camera.CFrame
-				local moveDir = Vector3.zero
-				if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + Camera.CFrame.LookVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - Camera.CFrame.LookVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - Camera.CFrame.RightVector end
-				if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + Camera.CFrame.RightVector end
-				bodyVel.Velocity = moveDir * flySpeed
-			end
-		end)
+local speedBox = Instance.new("TextBox")
+speedBox.Size = UDim2.new(1, -10, 0, 30)
+speedBox.Position = UDim2.new(0, 5, 0, 160)
+speedBox.Text = tostring(flySpeed)
+speedBox.PlaceholderText = "Hız girin (örn. 100)"
+speedBox.Font = Enum.Font.Gotham
+speedBox.TextSize = 14
+speedBox.TextColor3 = Color3.new(1,1,1)
+speedBox.BackgroundColor3 = Color3.fromRGB(40,40,40)
+speedBox.Parent = frame
+
+speedBox.FocusLost:Connect(function()
+	local num = tonumber(speedBox.Text)
+	if num and num > 0 then
+		flySpeed = num
+		speedBox.Text = tostring(flySpeed)
 	else
-		if bodyVel then bodyVel:Destroy() end
-		if bodyGyro then bodyGyro:Destroy() end
+		speedBox.Text = tostring(flySpeed)
 	end
-	flyButton.Text = flyEnabled and "Fly: Açık (H)" or "Fly: Kapalı (H)"
+end)
+
+local function startFly()
+	local hrp = Character:WaitForChild("HumanoidRootPart")
+	BV = Instance.new("BodyVelocity")
+	BG = Instance.new("BodyGyro")
+	BV.MaxForce = Vector3.new(1e5,1e5,1e5)
+	BG.MaxTorque = Vector3.new(1e5,1e5,1e5)
+	BV.Parent = hrp
+	BG.Parent = hrp
+	RunService.RenderStepped:Connect(function()
+		if flyEnabled then
+			local move = Vector3.zero
+			if UserInputService:IsKeyDown(Enum.KeyCode.W) then move += Camera.CFrame.LookVector end
+			if UserInputService:IsKeyDown(Enum.KeyCode.S) then move -= Camera.CFrame.LookVector end
+			if UserInputService:IsKeyDown(Enum.KeyCode.A) then move -= Camera.CFrame.RightVector end
+			if UserInputService:IsKeyDown(Enum.KeyCode.D) then move += Camera.CFrame.RightVector end
+			if UserInputService:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0,1,0) end
+			if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then move -= Vector3.new(0,1,0) end
+			BV.Velocity = move * flySpeed
+			BG.CFrame = Camera.CFrame
+		end
+	end)
 end
 
-UserInputService.InputBegan:Connect(function(input)
-	if input.KeyCode == Enum.KeyCode.H then
-		setFly(not flyEnabled)
+local function stopFly()
+	if BV then BV:Destroy() end
+	if BG then BG:Destroy() end
+end
+
+flyBtn.MouseButton1Click:Connect(function()
+	flyEnabled = not flyEnabled
+	if flyEnabled then
+		flyBtn.Text = "Fly: Açık"
+		startFly()
+	else
+		flyBtn.Text = "Fly: Kapalı"
+		stopFly()
 	end
 end)
 
--- GUI Aç/Kapa (O tuşu)
-local guiVisible = true
-UserInputService.InputBegan:Connect(function(input)
-	if input.KeyCode == Enum.KeyCode.O then
-		guiVisible = not guiVisible
-		frame.Visible = guiVisible
-	end
-end)
-
--- Kapatma Butonu
+-- GUI kapatma
 local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 80, 0, 25)
+closeBtn.Position = UDim2.new(1, -85, 0, 5)
 closeBtn.Text = "Kapat (X)"
 closeBtn.Font = Enum.Font.GothamBold
-closeBtn.TextSize = 14
-closeBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.Size = UDim2.new(0, 80, 0, 25)
-closeBtn.Position = UDim2.new(1, -85, 0, 0)
+closeBtn.TextSize = 13
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.BackgroundColor3 = Color3.fromRGB(255,0,0)
 closeBtn.Parent = frame
 closeBtn.MouseButton1Click:Connect(function()
-	screenGui:Destroy()
+	gui:Destroy()
 end)
