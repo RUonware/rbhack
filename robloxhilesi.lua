@@ -14,7 +14,7 @@ local Camera = workspace.CurrentCamera
 -- Değişkenler
 local flying = false
 local flyMode = 2 -- 1 = yavaş, 2 = orta, 3 = hızlı
-local flySpeeds = {25, 60, 100}
+local flySpeeds = {25, 60, 100, 999}
 local BV, BG, HRP
 
 -- GUI oluştur
@@ -101,7 +101,7 @@ end)
 
 modeBtn.MouseButton1Click:Connect(function()
 	flyMode = flyMode % 3 + 1
-	modeBtn.Text = "Mod: " .. ({ "Yavaş (25)", "Orta (60)", "Hızlı (100)" })[flyMode]
+	modeBtn.Text = "Mod: " .. ({ "Yavaş (25)", "Orta (60)", "Hızlı (100)", "niga999" })[flyMode]
 end)
 
 -- Uçuş mantığı
@@ -128,3 +128,4 @@ RunService.RenderStepped:Connect(function()
 end)
 
 print("✅ RUON Fly GUI aktif (Mobil + PC uyumlu)")
+
