@@ -1,7 +1,7 @@
--- 🛠 RUON FLY GUI SYSTEM v3 (Sürüklenebilir + Reklamlı)
+-- 🛠 RUON FLY GUI SYSTEM v4 (Üst çubuktan sürüklenebilir + Reklamlı)
 -- 🔹 Kamera yönüne göre uçuş
--- 🔹 Sürüklenebilir GUI
--- 🔹 Sürüklenebilir hız ayarı
+-- 🔹 Üst bar sürüklenebilir
+-- 🔹 Canlı hız ayarı (slider)
 -- 🔹 Renk animasyonlu site reklamı
 -- 🔹 PC + Mobil destekli
 
@@ -31,23 +31,29 @@ frame.Position = UDim2.new(0.05, 0, 0.7, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame.BackgroundTransparency = 0.1
 frame.Active = true
-frame.Draggable = true -- 🟢 GUI sürüklenebilir
 frame.Parent = gui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 
+-- 🟩 Üst sürüklenebilir bar
+local dragBar = Instance.new("Frame")
+dragBar.Size = UDim2.new(1, 0, 0, 30)
+dragBar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+dragBar.Parent = frame
+Instance.new("UICorner", dragBar).CornerRadius = UDim.new(0, 10)
+
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 25)
-title.Text = "RUON FLY SYSTEM"
+title.Size = UDim2.new(1, 0, 1, 0)
+title.Text = "🛠 RUON FLY SYSTEM"
 title.TextColor3 = Color3.fromRGB(0,255,150)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 title.BackgroundTransparency = 1
-title.Parent = frame
+title.Parent = dragBar
 
 -- ✈️ Fly butonu
 local flyBtn = Instance.new("TextButton")
 flyBtn.Size = UDim2.new(1, -20, 0, 35)
-flyBtn.Position = UDim2.new(0, 10, 0, 35)
+flyBtn.Position = UDim2.new(0, 10, 0, 45)
 flyBtn.Text = "Fly: Kapalı ❌"
 flyBtn.Font = Enum.Font.GothamBold
 flyBtn.TextSize = 18
@@ -59,7 +65,7 @@ Instance.new("UICorner", flyBtn).CornerRadius = UDim.new(0, 6)
 -- ⚙️ Hız etiketi
 local speedLabel = Instance.new("TextLabel")
 speedLabel.Size = UDim2.new(1, -20, 0, 25)
-speedLabel.Position = UDim2.new(0, 10, 0, 80)
+speedLabel.Position = UDim2.new(0, 10, 0, 90)
 speedLabel.Text = "Hız: " .. tostring(flySpeed)
 speedLabel.TextColor3 = Color3.new(1,1,1)
 speedLabel.Font = Enum.Font.GothamBold
@@ -70,7 +76,7 @@ speedLabel.Parent = frame
 -- 🔵 Slider arka plan
 local sliderBack = Instance.new("Frame")
 sliderBack.Size = UDim2.new(1, -40, 0, 6)
-sliderBack.Position = UDim2.new(0, 20, 0, 115)
+sliderBack.Position = UDim2.new(0, 20, 0, 125)
 sliderBack.BackgroundColor3 = Color3.fromRGB(60,60,60)
 sliderBack.Parent = frame
 Instance.new("UICorner", sliderBack).CornerRadius = UDim.new(1, 0)
@@ -83,7 +89,7 @@ slider.BackgroundColor3 = Color3.fromRGB(0,255,100)
 slider.Parent = sliderBack
 Instance.new("UICorner", slider).CornerRadius = UDim.new(1, 0)
 
--- 🧲 Sürükleme sistemi
+-- 🧲 Slider sürükleme sistemi
 local draggingSlider = false
 slider.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -110,8 +116,8 @@ end)
 -- 🌐 Site reklamı (renkli + tıklanabilir)
 local adBtn = Instance.new("TextButton")
 adBtn.Size = UDim2.new(1, -20, 0, 35)
-adBtn.Position = UDim2.new(0, 10, 0, 160)
-adBtn.Text = "🔗kopyala daha fazla hile için : ruonpanel.great-site.net"
+adBtn.Position = UDim2.new(0, 10, 0, 170)
+adBtn.Text = "🔗 Daha fazla script: ruonpanel.great-site.net"
 adBtn.Font = Enum.Font.GothamBold
 adBtn.TextSize = 14
 adBtn.TextColor3 = Color3.new(1,1,1)
@@ -134,7 +140,7 @@ adBtn.MouseButton1Click:Connect(function()
 	setclipboard(siteURL)
 	adBtn.Text = "📋 Kopyalandı! " .. siteURL
 	task.wait(2)
-	adBtn.Text = "🔗 RUON PANEL: ruonpanel.great-site.net"
+	adBtn.Text = "🔗 Daha fazla script: ruonpanel.great-site.net"
 end)
 
 -- ✈️ Uçuş sistemleri
@@ -195,5 +201,26 @@ RunService.RenderStepped:Connect(function()
 	BG.CFrame = CFrame.new(HRP.Position, HRP.Position + cam.LookVector)
 end)
 
-print("✅ RUON FLY GUI v3 aktif — sürüklenebilir + reklam aktif + hız ayarı canlı!")
+-- 🖱 Sürükleme sistemi (sadece üst bar)
+local dragging = false
+local dragStart, startPos
+dragBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+	end
+end)
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = false
+	end
+end)
 
+print("✅ RUON FLY GUI v4 aktif — üst bar sürüklenebilir + hız ayarı + reklam animasyonu aktif!")
