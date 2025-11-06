@@ -14,7 +14,7 @@ local Camera = workspace.CurrentCamera
 -- Değişkenler
 local flying = false
 local flyMode = 2 -- 1 = yavaş, 2 = orta, 3 = hızlı
-local flySpeeds = {25, 60, 100, 999}
+local flySpeeds = {50, 100, 999}
 local BV, BG, HRP
 
 -- GUI oluştur
@@ -128,4 +128,5 @@ RunService.RenderStepped:Connect(function()
 end)
 
 print("✅ RUON Fly GUI aktif (Mobil + PC uyumlu)")
+
 
