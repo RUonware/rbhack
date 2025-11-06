@@ -1,226 +1,106 @@
--- 🛠 RUON FLY GUI SYSTEM v4 (Üst çubuktan sürüklenebilir + Reklamlı)
--- 🔹 Kamera yönüne göre uçuş
--- 🔹 Üst bar sürüklenebilir
--- 🔹 Canlı hız ayarı (slider)
--- 🔹 Renk animasyonlu site reklamı
--- 🔹 PC + Mobil destekli
-
+-- Ruon Hack GUI (Final Version)
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local Camera = workspace.CurrentCamera
 
--- 🌍 Site adresi
-local siteURL = "https://ruonpanel.great-site.net"
-
--- 🧩 Değişkenler
-local flying = false
-local flySpeed = 100
-local BV, BG, HRP
-
--- 🧱 GUI
-local gui = Instance.new("ScreenGui")
-gui.Name = "RuonFlyGUI"
-gui.ResetOnSpawn = false
-gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+-- GUI Oluşturma
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "RuonHackGui"
+screenGui.Parent = PlayerGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 260)
-frame.Position = UDim2.new(0.05, 0, 0.7, 0)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-frame.BackgroundTransparency = 0.1
+frame.Size = UDim2.new(0, 300, 0, 220)
+frame.Position = UDim2.new(0.5, -150, 0.5, -110)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.BorderSizePixel = 0
 frame.Active = true
-frame.Parent = gui
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
-
--- 🟩 Üst sürüklenebilir bar
-local dragBar = Instance.new("Frame")
-dragBar.Size = UDim2.new(1, 0, 0, 30)
-dragBar.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-dragBar.Parent = frame
-Instance.new("UICorner", dragBar).CornerRadius = UDim.new(0, 10)
+frame.Draggable = true
+frame.Parent = screenGui
 
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 1, 0)
-title.Text = "🛠 RUON FLY SYSTEM"
-title.TextColor3 = Color3.fromRGB(0,255,150)
+title.Text = "🧠 Ruon Hack Panel"
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
+title.TextColor3 = Color3.fromRGB(0, 255, 0)
 title.BackgroundTransparency = 1
-title.Parent = dragBar
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Parent = frame
 
--- ✈️ Fly butonu
-local flyBtn = Instance.new("TextButton")
-flyBtn.Size = UDim2.new(1, -20, 0, 35)
-flyBtn.Position = UDim2.new(0, 10, 0, 45)
-flyBtn.Text = "Fly: Kapalı ❌"
-flyBtn.Font = Enum.Font.GothamBold
-flyBtn.TextSize = 18
-flyBtn.TextColor3 = Color3.new(1,1,1)
-flyBtn.BackgroundColor3 = Color3.fromRGB(45,45,45)
-flyBtn.Parent = frame
-Instance.new("UICorner", flyBtn).CornerRadius = UDim.new(0, 6)
-
--- ⚙️ Hız etiketi
-local speedLabel = Instance.new("TextLabel")
-speedLabel.Size = UDim2.new(1, -20, 0, 25)
-speedLabel.Position = UDim2.new(0, 10, 0, 90)
-speedLabel.Text = "Hız: " .. tostring(flySpeed)
-speedLabel.TextColor3 = Color3.new(1,1,1)
-speedLabel.Font = Enum.Font.GothamBold
-speedLabel.TextSize = 16
-speedLabel.BackgroundTransparency = 1
-speedLabel.Parent = frame
-
--- 🔵 Slider arka plan
-local sliderBack = Instance.new("Frame")
-sliderBack.Size = UDim2.new(1, -40, 0, 6)
-sliderBack.Position = UDim2.new(0, 20, 0, 125)
-sliderBack.BackgroundColor3 = Color3.fromRGB(60,60,60)
-sliderBack.Parent = frame
-Instance.new("UICorner", sliderBack).CornerRadius = UDim.new(1, 0)
-
--- 🟢 Sürüklenebilir top
-local slider = Instance.new("Frame")
-slider.Size = UDim2.new(0, 20, 0, 20)
-slider.Position = UDim2.new(0, (flySpeed/500)*(sliderBack.AbsoluteSize.X-20), 0, -7)
-slider.BackgroundColor3 = Color3.fromRGB(0,255,100)
-slider.Parent = sliderBack
-Instance.new("UICorner", slider).CornerRadius = UDim.new(1, 0)
-
--- 🧲 Slider sürükleme sistemi
-local draggingSlider = false
-slider.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		draggingSlider = true
-	end
-end)
-UserInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		draggingSlider = false
-	end
+-- Reklam
+local siteAd = Instance.new("TextButton")
+siteAd.Text = "Ziyaret Et: https://ruonpanel.great-site.net"
+siteAd.Font = Enum.Font.Gotham
+siteAd.TextSize = 14
+siteAd.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+siteAd.TextColor3 = Color3.fromRGB(0, 200, 255)
+siteAd.Size = UDim2.new(1, -10, 0, 30)
+siteAd.Position = UDim2.new(0, 5, 0, 35)
+siteAd.Parent = frame
+siteAd.MouseButton1Click:Connect(function()
+	setclipboard("https://ruonpanel.great-site.net")
+	game.StarterGui:SetCore("SendNotification", {
+		Title = "Ruon Panel",
+		Text = "Site linki panoya kopyalandı!",
+		Duration = 3
+	})
 end)
 
-RunService.RenderStepped:Connect(function()
-	if draggingSlider then
-		local mouseX = UserInputService:GetMouseLocation().X
-		local sliderX = math.clamp(mouseX - sliderBack.AbsolutePosition.X, 0, sliderBack.AbsoluteSize.X - 20)
-		slider.Position = UDim2.new(0, sliderX, 0, -7)
-		flySpeed = math.floor((sliderX / (sliderBack.AbsoluteSize.X - 20)) * 500)
-		if flySpeed < 10 then flySpeed = 10 end
-		speedLabel.Text = "Hız: " .. tostring(flySpeed)
-	end
-end)
+-- Noclip Toggle
+local noclipEnabled = false
+local noclipButton = Instance.new("TextButton")
+noclipButton.Text = "Noclip: Kapalı"
+noclipButton.Font = Enum.Font.Gotham
+noclipButton.TextSize = 14
+noclipButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+noclipButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+noclipButton.Size = UDim2.new(1, -10, 0, 30)
+noclipButton.Position = UDim2.new(0, 5, 0, 75)
+noclipButton.Parent = frame
 
--- 🌐 Site reklamı (renkli + tıklanabilir)
-local adBtn = Instance.new("TextButton")
-adBtn.Size = UDim2.new(1, -20, 0, 35)
-adBtn.Position = UDim2.new(0, 10, 0, 170)
-adBtn.Text = "🔗 Daha fazla script: ruonpanel.great-site.net"
-adBtn.Font = Enum.Font.GothamBold
-adBtn.TextSize = 14
-adBtn.TextColor3 = Color3.new(1,1,1)
-adBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
-adBtn.Parent = frame
-Instance.new("UICorner", adBtn).CornerRadius = UDim.new(0, 6)
-
--- 🔁 Renk animasyonu
-task.spawn(function()
-	while task.wait(0.05) do
-		for i = 0, 255, 8 do
-			adBtn.BackgroundColor3 = Color3.fromRGB(i, 100, 255 - i)
-			task.wait(0.03)
+local noclipConnection
+noclipButton.MouseButton1Click:Connect(function()
+	noclipEnabled = not noclipEnabled
+	noclipButton.Text = noclipEnabled and "Noclip: Açık" or "Noclip: Kapalı"
+	if noclipEnabled then
+		noclipConnection = RunService.Stepped:Connect(function()
+			if Character and Character:FindFirstChild("HumanoidRootPart") then
+				for _, part in pairs(Character:GetChildren()) do
+					if part:IsA("BasePart") then
+						part.CanCollide = false
+					end
+				end
+			end
+		end)
+	else
+		if noclipConnection then
+			noclipConnection:Disconnect()
 		end
 	end
 end)
 
--- 💡 Siteye tıklama
-adBtn.MouseButton1Click:Connect(function()
-	setclipboard(siteURL)
-	adBtn.Text = "📋 Kopyalandı! " .. siteURL
-	task.wait(2)
-	adBtn.Text = "🔗 Daha fazla script: ruonpanel.great-site.net"
-end)
-
--- ✈️ Uçuş sistemleri
-local function startFly()
-	local char = LocalPlayer.Character
-	if not char then return end
-	HRP = char:FindFirstChild("HumanoidRootPart")
-	if not HRP then return end
-
-	BV = Instance.new("BodyVelocity")
-	BV.MaxForce = Vector3.new(1e5,1e5,1e5)
-	BV.Velocity = Vector3.zero
-	BV.Parent = HRP
-
-	BG = Instance.new("BodyGyro")
-	BG.MaxTorque = Vector3.new(1e5,1e5,1e5)
-	BG.CFrame = HRP.CFrame
-	BG.Parent = HRP
-end
-
-local function stopFly()
-	if BV then BV:Destroy() BV = nil end
-	if BG then BG:Destroy() BG = nil end
-end
-
--- 🔄 Fly butonu davranışı
-flyBtn.MouseButton1Click:Connect(function()
-	flying = not flying
-	if flying then
-		startFly()
-		flyBtn.Text = "Fly: Açık ✅"
-		flyBtn.BackgroundColor3 = Color3.fromRGB(0,170,0)
-	else
-		stopFly()
-		flyBtn.Text = "Fly: Kapalı ❌"
-		flyBtn.BackgroundColor3 = Color3.fromRGB(45,45,45)
+-- GUI Aç/Kapa Tuşu
+local guiVisible = true
+UserInputService.InputBegan:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.O then
+		guiVisible = not guiVisible
+		frame.Visible = guiVisible
 	end
 end)
 
--- 💨 Uçuş hareketi
-RunService.RenderStepped:Connect(function()
-	if not flying or not BV or not BG or not HRP then return end
-	local cam = Camera.CFrame
-	local move = Vector3.zero
-
-	if UserInputService:IsKeyDown(Enum.KeyCode.W) then move += cam.LookVector end
-	if UserInputService:IsKeyDown(Enum.KeyCode.S) then move -= cam.LookVector end
-	if UserInputService:IsKeyDown(Enum.KeyCode.A) then move -= cam.RightVector end
-	if UserInputService:IsKeyDown(Enum.KeyCode.D) then move += cam.RightVector end
-	if UserInputService:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0,1,0) end
-	if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then move -= Vector3.new(0,1,0) end
-
-	if move.Magnitude > 0 then
-		move = move.Unit * flySpeed
-	end
-
-	BV.Velocity = move
-	BG.CFrame = CFrame.new(HRP.Position, HRP.Position + cam.LookVector)
+-- Kapatma Butonu
+local closeBtn = Instance.new("TextButton")
+closeBtn.Text = "Kapat (X)"
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 14
+closeBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Size = UDim2.new(0, 80, 0, 25)
+closeBtn.Position = UDim2.new(1, -85, 0, 0)
+closeBtn.Parent = frame
+closeBtn.MouseButton1Click:Connect(function()
+	screenGui:Destroy()
 end)
-
--- 🖱 Sürükleme sistemi (sadece üst bar)
-local dragging = false
-local dragStart, startPos
-dragBar.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = true
-		dragStart = input.Position
-		startPos = frame.Position
-	end
-end)
-UserInputService.InputChanged:Connect(function(input)
-	if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-		local delta = input.Position - dragStart
-		frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-	end
-end)
-UserInputService.InputEnded:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		dragging = false
-	end
-end)
-
-print("✅ RUON FLY GUI v4 aktif — üst bar sürüklenebilir + hız ayarı + reklam animasyonu aktif!")
