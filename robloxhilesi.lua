@@ -1,11 +1,13 @@
--- 🛠 RUON FLY GUI SYSTEM (Sürüklenebilir Hız Çubuğu Versiyonu)
+-- 🛠 RUON FLY GUI SYSTEM v2 (Reklamlı, Sürüklenebilir Hız)
 -- 🔹 Kamera yönüne göre uçuş
--- 🔹 Sürüklenebilir hız ayarı (10–500 arası)
--- 🔹 Mobil + PC destekli GUI
+-- 🔹 Sürüklenebilir hız çubuğu (10–500)
+-- 🔹 Site reklamı animasyonlu ve tıklanabilir
+-- 🔹 Mobil + PC destekli
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
+local GuiService = game:GetService("GuiService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
@@ -13,6 +15,7 @@ local Camera = workspace.CurrentCamera
 local flying = false
 local flySpeed = 100
 local BV, BG, HRP
+local siteURL = "https://ruonpanel.great-site.net"
 
 -- 🧱 GUI oluştur
 local gui = Instance.new("ScreenGui")
@@ -21,7 +24,7 @@ gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Size = UDim2.new(0, 300, 0, 230)
 frame.Position = UDim2.new(0.05, 0, 0.7, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame.BackgroundTransparency = 0.1
@@ -37,7 +40,7 @@ title.TextSize = 18
 title.BackgroundTransparency = 1
 title.Parent = frame
 
--- 🔘 Uçma butonu
+-- ✈️ Fly butonu
 local flyBtn = Instance.new("TextButton")
 flyBtn.Size = UDim2.new(1, -20, 0, 35)
 flyBtn.Position = UDim2.new(0, 10, 0, 35)
@@ -49,7 +52,7 @@ flyBtn.BackgroundColor3 = Color3.fromRGB(45,45,45)
 flyBtn.Parent = frame
 Instance.new("UICorner", flyBtn).CornerRadius = UDim.new(0, 6)
 
--- ⚙️ Hız başlığı
+-- ⚙️ Hız etiketi
 local speedLabel = Instance.new("TextLabel")
 speedLabel.Size = UDim2.new(1, -20, 0, 25)
 speedLabel.Position = UDim2.new(0, 10, 0, 80)
@@ -76,15 +79,13 @@ slider.BackgroundColor3 = Color3.fromRGB(0,255,100)
 slider.Parent = sliderBack
 Instance.new("UICorner", slider).CornerRadius = UDim.new(1, 0)
 
--- 🧲 Slider sürükleme
+-- 🧲 Sürükleme sistemi
 local dragging = false
-
 slider.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		dragging = true
 	end
 end)
-
 UserInputService.InputEnded:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 		dragging = false
@@ -100,6 +101,36 @@ RunService.RenderStepped:Connect(function()
 		if flySpeed < 10 then flySpeed = 10 end
 		speedLabel.Text = "Hız: " .. tostring(flySpeed)
 	end
+end)
+
+-- 🌐 Reklam paneli
+local adBtn = Instance.new("TextButton")
+adBtn.Size = UDim2.new(1, -20, 0, 30)
+adBtn.Position = UDim2.new(0, 10, 0, 160)
+adBtn.Text = "🔗 Ziyaret Et: ruonpanel.great-site.net"
+adBtn.Font = Enum.Font.GothamBold
+adBtn.TextSize = 14
+adBtn.TextColor3 = Color3.new(1,1,1)
+adBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+adBtn.Parent = frame
+Instance.new("UICorner", adBtn).CornerRadius = UDim.new(0, 6)
+
+-- 🔁 Reklam animasyonu (renk geçişi)
+task.spawn(function()
+	while task.wait(0.1) do
+		for i = 0, 255, 10 do
+			adBtn.BackgroundColor3 = Color3.fromRGB(i, 120, 255 - i)
+			task.wait(0.03)
+		end
+	end
+end)
+
+-- 💡 Siteye yönlendirme
+adBtn.MouseButton1Click:Connect(function()
+	setclipboard(siteURL)
+	adBtn.Text = "📋 Kopyalandı! (" .. siteURL .. ")"
+	task.wait(2)
+	adBtn.Text = "🔗 Ziyaret Et: ruonpanel.great-site.net"
 end)
 
 -- ✈️ Uçuş fonksiyonları
@@ -160,4 +191,4 @@ RunService.RenderStepped:Connect(function()
 	BG.CFrame = CFrame.new(HRP.Position, HRP.Position + cam.LookVector)
 end)
 
-print("✅ RUON Fly GUI aktif (Sürüklenebilir hız + mobil destek)")
+print("✅ RUON Fly GUI aktif (Reklam + sürüklenebilir hız + mobil destek)")
