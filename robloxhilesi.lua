@@ -22,7 +22,7 @@ frame.Parent = gui
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
-title.Text = "🧠 RUON PANEL"
+title.Text = "RUONware"
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 title.TextColor3 = Color3.fromRGB(0,255,0)
@@ -169,3 +169,4 @@ closeBtn.Parent = frame
 closeBtn.MouseButton1Click:Connect(function()
 	gui:Destroy()
 end)
+
