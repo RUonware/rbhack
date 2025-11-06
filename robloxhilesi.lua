@@ -1,9 +1,7 @@
--- 🛠 RUON FLY GUI SYSTEM (PC + Mobil)
--- Özellikler:
+-- 🛠 RUON FLY GUI SYSTEM (Sürüklenebilir Hız Çubuğu Versiyonu)
 -- 🔹 Kamera yönüne göre uçuş
--- 🔹 3 hız modu (Yavaş / Orta / Hızlı)
--- 🔹 Uçma Aç/Kapa butonu
--- 🔹 Hem PC hem Mobil destekli
+-- 🔹 Sürüklenebilir hız ayarı (10–500 arası)
+-- 🔹 Mobil + PC destekli GUI
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -11,21 +9,20 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
--- Değişkenler
+-- 🧩 Değişkenler
 local flying = false
-local flyMode = 2 -- 1 = yavaş, 2 = orta, 3 = hızlı
-local flySpeeds = {50, 100, 999}
+local flySpeed = 100
 local BV, BG, HRP
 
--- GUI oluştur
+-- 🧱 GUI oluştur
 local gui = Instance.new("ScreenGui")
 gui.Name = "RuonFlyGUI"
 gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 300)
-frame.Position = UDim2.new(0.05, 0, 0.75, 0)
+frame.Size = UDim2.new(0, 300, 0, 200)
+frame.Position = UDim2.new(0.05, 0, 0.7, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame.BackgroundTransparency = 0.1
 frame.Parent = gui
@@ -33,26 +30,18 @@ Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 25)
-title.Text = "RUON FLY"
-title.TextColor3 = Color3.new(1,1,1)
+title.Text = "RUON FLY SYSTEM"
+title.TextColor3 = Color3.fromRGB(0,255,150)
 title.Font = Enum.Font.GothamBold
-title.TextSize = 16
+title.TextSize = 18
 title.BackgroundTransparency = 1
 title.Parent = frame
 
-local title = Instance.new("TextLabel2")
-title.Size = UDim2.new(1, 0, 0, 25)
-title.Text = "-- https://ruonpanel.great-site.net --"
-title.TextColor3 = Color3.new(2,50,200)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 12
-title.BackgroundTransparency = 1
-title.Parent = frame
-
+-- 🔘 Uçma butonu
 local flyBtn = Instance.new("TextButton")
 flyBtn.Size = UDim2.new(1, -20, 0, 35)
-flyBtn.Position = UDim2.new(0, 10, 0, 30)
-flyBtn.Text = "Fly: Kapalı"
+flyBtn.Position = UDim2.new(0, 10, 0, 35)
+flyBtn.Text = "Fly: Kapalı ❌"
 flyBtn.Font = Enum.Font.GothamBold
 flyBtn.TextSize = 18
 flyBtn.TextColor3 = Color3.new(1,1,1)
@@ -60,18 +49,60 @@ flyBtn.BackgroundColor3 = Color3.fromRGB(45,45,45)
 flyBtn.Parent = frame
 Instance.new("UICorner", flyBtn).CornerRadius = UDim.new(0, 6)
 
-local modeBtn = Instance.new("TextButton")
-modeBtn.Size = UDim2.new(1, -20, 0, 35)
-modeBtn.Position = UDim2.new(0, 10, 0, 70)
-modeBtn.Text = "Mod: Orta (60)"
-modeBtn.Font = Enum.Font.GothamBold
-modeBtn.TextSize = 18
-modeBtn.TextColor3 = Color3.new(1,1,1)
-modeBtn.BackgroundColor3 = Color3.fromRGB(45,45,45)
-modeBtn.Parent = frame
-Instance.new("UICorner", modeBtn).CornerRadius = UDim.new(0, 6)
+-- ⚙️ Hız başlığı
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Size = UDim2.new(1, -20, 0, 25)
+speedLabel.Position = UDim2.new(0, 10, 0, 80)
+speedLabel.Text = "Hız: " .. tostring(flySpeed)
+speedLabel.TextColor3 = Color3.new(1,1,1)
+speedLabel.Font = Enum.Font.GothamBold
+speedLabel.TextSize = 16
+speedLabel.BackgroundTransparency = 1
+speedLabel.Parent = frame
 
--- Uçmayı başlat/durdur
+-- 🔵 Slider arka plan
+local sliderBack = Instance.new("Frame")
+sliderBack.Size = UDim2.new(1, -40, 0, 6)
+sliderBack.Position = UDim2.new(0, 20, 0, 115)
+sliderBack.BackgroundColor3 = Color3.fromRGB(60,60,60)
+sliderBack.Parent = frame
+Instance.new("UICorner", sliderBack).CornerRadius = UDim.new(1, 0)
+
+-- 🟢 Sürüklenebilir top
+local slider = Instance.new("Frame")
+slider.Size = UDim2.new(0, 20, 0, 20)
+slider.Position = UDim2.new(0, (flySpeed/500)*(sliderBack.AbsoluteSize.X-20), 0, -7)
+slider.BackgroundColor3 = Color3.fromRGB(0,255,100)
+slider.Parent = sliderBack
+Instance.new("UICorner", slider).CornerRadius = UDim.new(1, 0)
+
+-- 🧲 Slider sürükleme
+local dragging = false
+
+slider.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = false
+	end
+end)
+
+RunService.RenderStepped:Connect(function()
+	if dragging then
+		local mouseX = UserInputService:GetMouseLocation().X
+		local sliderX = math.clamp(mouseX - sliderBack.AbsolutePosition.X, 0, sliderBack.AbsoluteSize.X - 20)
+		slider.Position = UDim2.new(0, sliderX, 0, -7)
+		flySpeed = math.floor((sliderX / (sliderBack.AbsoluteSize.X - 20)) * 500)
+		if flySpeed < 10 then flySpeed = 10 end
+		speedLabel.Text = "Hız: " .. tostring(flySpeed)
+	end
+end)
+
+-- ✈️ Uçuş fonksiyonları
 local function startFly()
 	local char = LocalPlayer.Character
 	if not char then return end
@@ -94,13 +125,13 @@ local function stopFly()
 	if BG then BG:Destroy() BG = nil end
 end
 
--- Buton olayları
+-- 🔄 Buton davranışı
 flyBtn.MouseButton1Click:Connect(function()
 	flying = not flying
 	if flying then
 		startFly()
 		flyBtn.Text = "Fly: Açık ✅"
-		flyBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+		flyBtn.BackgroundColor3 = Color3.fromRGB(0,170,0)
 	else
 		stopFly()
 		flyBtn.Text = "Fly: Kapalı ❌"
@@ -108,18 +139,12 @@ flyBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
-modeBtn.MouseButton1Click:Connect(function()
-	flyMode = flyMode % 3 + 1
-	modeBtn.Text = "Mod: " .. ({ "Yavaş (25)", "Orta (60)", "Hızlı (100)", "niga999" })[flyMode]
-end)
-
--- Uçuş mantığı
+-- 💨 Uçuş mantığı
 RunService.RenderStepped:Connect(function()
 	if not flying or not BV or not BG or not HRP then return end
 	local cam = Camera.CFrame
 	local move = Vector3.zero
 
-	-- PC kontrolleri
 	if UserInputService:IsKeyDown(Enum.KeyCode.W) then move += cam.LookVector end
 	if UserInputService:IsKeyDown(Enum.KeyCode.S) then move -= cam.LookVector end
 	if UserInputService:IsKeyDown(Enum.KeyCode.A) then move -= cam.RightVector end
@@ -127,19 +152,12 @@ RunService.RenderStepped:Connect(function()
 	if UserInputService:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0,1,0) end
 	if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then move -= Vector3.new(0,1,0) end
 
-	-- Mobilde dokunmatik joystick zaten hareket vektörü gönderir
 	if move.Magnitude > 0 then
-		move = move.Unit * flySpeeds[flyMode]
+		move = move.Unit * flySpeed
 	end
 
 	BV.Velocity = move
 	BG.CFrame = CFrame.new(HRP.Position, HRP.Position + cam.LookVector)
 end)
 
-print("✅ RUON Fly GUI aktif (Mobil + PC uyumlu)")
-
-
-
-
-
-
+print("✅ RUON Fly GUI aktif (Sürüklenebilir hız + mobil destek)")
