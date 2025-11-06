@@ -24,7 +24,7 @@ gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 220, 0, 110)
+frame.Size = UDim2.new(0, 300, 0, 300)
 frame.Position = UDim2.new(0.05, 0, 0.75, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 frame.BackgroundTransparency = 0.1
@@ -33,10 +33,19 @@ Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 25)
-title.Text = "RUON FLY başka hileler için -- https://ruonpanel.great-site.net --"
+title.Text = "RUON FLY"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 16
+title.BackgroundTransparency = 1
+title.Parent = frame
+
+local title = Instance.new("TextLabel2")
+title.Size = UDim2.new(1, 0, 0, 25)
+title.Text = "-- https://ruonpanel.great-site.net --"
+title.TextColor3 = Color3.new(2,50,200)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 12
 title.BackgroundTransparency = 1
 title.Parent = frame
 
@@ -128,6 +137,7 @@ RunService.RenderStepped:Connect(function()
 end)
 
 print("✅ RUON Fly GUI aktif (Mobil + PC uyumlu)")
+
 
 
 
