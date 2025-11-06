@@ -111,7 +111,7 @@ end)
 local adBtn = Instance.new("TextButton")
 adBtn.Size = UDim2.new(1, -20, 0, 35)
 adBtn.Position = UDim2.new(0, 10, 0, 160)
-adBtn.Text = "🔗 RUON PANEL: ruonpanel.great-site.net"
+adBtn.Text = "🔗kopyala daha fazla hile için : ruonpanel.great-site.net"
 adBtn.Font = Enum.Font.GothamBold
 adBtn.TextSize = 14
 adBtn.TextColor3 = Color3.new(1,1,1)
@@ -196,3 +196,4 @@ RunService.RenderStepped:Connect(function()
 end)
 
 print("✅ RUON FLY GUI v3 aktif — sürüklenebilir + reklam aktif + hız ayarı canlı!")
+
