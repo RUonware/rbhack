@@ -355,7 +355,8 @@ local worldColors = {
     {Name="Kırmızı", Color=Color3.fromRGB(255,60,60)},
     {Name="Yeşil", Color=Color3.fromRGB(60,255,100)},
     {Name="Beyaz", Color=Color3.fromRGB(255,255,255)},
-    {Name="Koyu", Color=Color3.fromRGB(20,20,20)}
+    {Name="Koyu", Color=Color3.fromRGB(20,20,20)},
+	{Name="manifest", Color=Color3.fromRGB(115,43,245)}
 }
 
 for _,data in ipairs(worldColors) do
